@@ -1,12 +1,19 @@
 {
-  "name": "nodejs",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+    "name": "nodejs",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "dev": "vite"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "vite": "^5.4.11",
+        "vite-plugin-node": "^4.0.0"
+    },
+    "dependencies": {
+        "express": "^4.21.2"
+    }
 }
