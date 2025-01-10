@@ -1,5 +1,4 @@
 import express from "express";
-import bodyParser from "body-parser"; // Middleware để parse request body
 
 // framework
 const app = express();
