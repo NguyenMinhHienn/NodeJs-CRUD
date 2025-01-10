@@ -1,30 +1,19 @@
-import express from "express";
-
-// framework
-const app = express();
-
-// middleware
-
-app.use(express.json());
 // data fake
 const data = [
     { id: 1, name: "Product A", price: 100 }, // item
     { id: 2, name: "Product B", price: 200 },
     { id: 3, name: "Product C", price: 300 },
     { id: 4, name: "Product D", price: 400 }, // item
-
-    // 4 - {id: 4, name: "Product D update", price: 400}
 ];
-
 /**
  * @route   GET /products
  * @desc    Lấy toàn bộ danh sách sản phẩm
  * @access  Public
  * @returns {Array} Danh sách sản phẩm hiện tại
  * */
-app.get("/products", (req, res) => {
+export const getProducts = (req, res) => {
     res.status(200).json(data);
-});
+};
 /**
  * @route   GET /products/:id
  * @desc    Lấy thông tin chi tiết của một sản phẩm theo ID
@@ -32,7 +21,7 @@ app.get("/products", (req, res) => {
  * @param   {number} req.params.id - ID của sản phẩm cần lấy
  * @returns {Object} Thông tin sản phẩm hoặc thông báo lỗi
  * */
-app.get("/products/:id", (req, res) => {
+export const getProductById = (req, res) => {
     const id = req.params.id;
     const product = data.find((item) => item.id === +id);
     if (!product) {
@@ -41,7 +30,7 @@ app.get("/products/:id", (req, res) => {
         });
     }
     return res.status(200).json(product);
-});
+};
 
 /**
  * @route   POST /products
@@ -53,8 +42,7 @@ app.get("/products/:id", (req, res) => {
  * @property {number} price - Giá của sản phẩm (bắt buộc)
  * @returns {Object} Thông tin sản phẩm vừa được thêm hoặc thông báo lỗi
  * */
-
-app.post("/products", (req, res) => {
+export const createProduct = (req, res) => {
     const { id, name, price } = req.body;
     // // Kiểm tra thông tin đầu vào
     if (!id || !name || !price) {
@@ -66,8 +54,9 @@ app.post("/products", (req, res) => {
     const newProduct = { id, name, price };
     data.push(newProduct);
     return res.status(201).json(newProduct);
-});
-app.delete("/products/:id", (req, res) => {
+};
+
+export const removeProduct = (req, res) => {
     const { id } = req.params;
     const product = data.find((item) => item.id === +id);
     if (!product) return res.status(404).json({ message: "Sản phẩm không tồn tại" });
@@ -77,7 +66,7 @@ app.delete("/products/:id", (req, res) => {
         message: "Xóa sản phẩm thành công",
         product,
     });
-});
+};
 /**
  * @route   PUT /products/:id
  * @desc    Cập nhật thông tin một sản phẩm theo ID
@@ -88,7 +77,7 @@ app.delete("/products/:id", (req, res) => {
  * @property {number} price - Giá mới của sản phẩm (tuỳ chọn)
  * @returns {Object} Thông báo trạng thái và thông tin sản phẩm đã cập nhật
  * */
-app.put("/products/:id", (req, res) => {
+export const updateProduct = (req, res) => {
     const { id } = req.params;
     const body = req.body;
     const product = data.find((item) => item.id === +id);
@@ -99,31 +88,4 @@ app.put("/products/:id", (req, res) => {
         message: "Cập nhật sản phẩm thành công",
         product: { id: +id, ...body },
     });
-});
-export const viteNodeApp = app;
-
-/**
- * Xóa sản phẩm
- * B1: Định nghĩa router
- *  - METHOD: DELETE
- *  - PATH: /products/:id
- * B2: Xử lý logic
- *  - Lấy ID sản phẩm cần xóa
- *  - Kiểm tra nếu không có sản phẩm ở trong db thì báo lỗi
- *  - Xóa sản phẩm dựa theo id nhận được
- *  - Nếu thành công thi trả về thông báo
- */
-
-/**
- * Cập nhật sản phẩm
- * B1: Đinh nghĩa router
- *  - Method: PUT
- *  - Path: /products/:id
- * B2: Xử lý logic
- *  - Lấy ID sản phẩm cần cập nhật
- *  - Kiểm tra nếu không có sản phẩm ở trong db thì báo lỗi
- *  - Cập nhật sản phẩm dựa id, body nhận được
- *      + nếu sản phẩm có id bằng với id nhận được thì cập nhật
- *      + Ngược lại thì giữ nguyên
- * - Nếu thành công thì trả về sản phẩm vừa cập nhật
- */
+};
