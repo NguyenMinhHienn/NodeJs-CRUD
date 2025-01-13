@@ -1,3 +1,24 @@
+import Joi from "joi";
+
+// shcema validation
+
+const productSchema = Joi.object({
+    id: Joi.number().positive().integer().messages({
+        "number.base": "ID phải là số",
+        "number.positive": "ID phải là số dương",
+    }),
+    name: Joi.string().required().min(3).messages({
+        "string.empty": "Tên sản phẩm không được để trống",
+        "string.min": "Tên sản phẩm phải có ít nhất 3 ký tự",
+        "any.required": "Tên sản phẩm bắt buộc nhập",
+    }),
+    price: Joi.number().positive().required().messages({
+        "number.base": "Giá sản phẩm phải là số",
+        "number.positive": "Giá sản phẩm phải là số dương",
+        "any.required": "Giá sản phẩm bắt buộc nhập",
+    }),
+});
+
 // data fake
 const data = [
     { id: 1, name: "Product A", price: 100 }, // item
@@ -43,20 +64,24 @@ export const getProductById = (req, res) => {
  * @returns {Object} Thông tin sản phẩm vừa được thêm hoặc thông báo lỗi
  * */
 export const createProduct = (req, res) => {
-    const { id, name, price } = req.body;
-    // // Kiểm tra thông tin đầu vào
-    if (!id || !name || !price) {
-        return res.status(400).json({ message: "Thiếu thông tin sản phẩm!" });
+    const { error, value } = productSchema.validate(req.body, {
+        abortEarly: false, // cho phép hiển thị nhiều lỗi
+        convert: false, // Không cho phép convert dữ liệu đầu vào
+    });
+    if (error) {
+        const errors = error.details.map((error) => error.message);
+        return res.status(400).json(errors);
     }
-    // Kiểm tra xem sản phẩm có trùng ID không
-    const existProduct = data.find((item) => item.id === +id);
+
+    const existProduct = data.find((item) => item.id === +value.id);
     if (existProduct) return res.status(400).json({ message: "Sản phẩm trùng ID!" });
-    const newProduct = { id, name, price };
+    const newProduct = { ...value, id: data.length + 1 };
     data.push(newProduct);
     return res.status(201).json(newProduct);
 };
 
 export const removeProduct = (req, res) => {
+    const { error, value } = productSchema.validate({ id: req.params.id }, { abortEarly: false });
     const { id } = req.params;
     const product = data.find((item) => item.id === +id);
     if (!product) return res.status(404).json({ message: "Sản phẩm không tồn tại" });
