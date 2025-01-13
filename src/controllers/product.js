@@ -7,8 +7,9 @@ const productSchema = Joi.object({
         "number.base": "ID phải là số",
         "number.positive": "ID phải là số dương",
     }),
-    name: Joi.string().required().min(3).messages({
-        "string.empty": "Tên sản phẩm không được để trống",
+    name: Joi.string().trim().required().min(3).messages({
+        "string.base": "Tên sản phẩm phải là chuỗi",
+        "string.trim": "Tên sản phẩm không được chứa khoảng trắng",
         "string.min": "Tên sản phẩm phải có ít nhất 3 ký tự",
         "any.required": "Tên sản phẩm bắt buộc nhập",
     }),
