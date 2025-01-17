@@ -2,7 +2,6 @@ import Joi from "joi";
 import Product from "../models/product";
 
 // shcema validation
-
 const productSchema = Joi.object({
     id: Joi.number().positive().integer().messages({
         "number.base": "ID phải là số",
@@ -112,17 +111,28 @@ export const createProduct = async (req, res) => {
     // return res.status(201).json(newProduct);
 };
 
-export const removeProduct = (req, res) => {
-    const { error, value } = productSchema.validate({ id: req.params.id }, { abortEarly: false });
-    const { id } = req.params;
-    const product = data.find((item) => item.id === +id);
-    if (!product) return res.status(404).json({ message: "Sản phẩm không tồn tại" });
-    // dữ liệu fake
-    data.filter((item) => item.id !== +id);
-    return res.status(200).json({
-        message: "Xóa sản phẩm thành công",
-        product,
-    });
+export const removeProduct = async (req, res) => {
+    try {
+        const product = await Product.findByIdAndDelete(req.params.id);
+        return res.status(200).json({
+            message: " Xóa sản phẩm thành công",
+            product,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            message: error.message,
+        });
+    }
+    // const { error, value } = productSchema.validate({ id: req.params.id }, { abortEarly: false });
+    // const { id } = req.params;
+    // const product = data.find((item) => item.id === +id);
+    // if (!product) return res.status(404).json({ message: "Sản phẩm không tồn tại" });
+    // // dữ liệu fake
+    // data.filter((item) => item.id !== +id);
+    // return res.status(200).json({
+    //     message: "Xóa sản phẩm thành công",
+    //     product,
+    // });
 };
 /**
  * @route   PUT /products/:id
@@ -134,15 +144,34 @@ export const removeProduct = (req, res) => {
  * @property {number} price - Giá mới của sản phẩm (tuỳ chọn)
  * @returns {Object} Thông báo trạng thái và thông tin sản phẩm đã cập nhật
  * */
-export const updateProduct = (req, res) => {
-    const { id } = req.params;
-    const body = req.body;
-    const product = data.find((item) => item.id === +id);
-    if (!product) return res.status(404).json({ message: "Sản phẩm không tồn tại" });
-    // cập nhật
-    data.map((item) => (item.id === +id ? { id: +id, ...body } : item));
-    return res.status(200).json({
-        message: "Cập nhật sản phẩm thành công",
-        product: { id: +id, ...body },
-    });
+export const updateProduct = async (req, res) => {
+    try {
+        const { error, value } = productSchema.validate(req.body, {
+            abortEarly: false, // cho phép hiển thị nhiều lỗi
+            convert: false, // Không cho phép convert dữ liệu đầu vào
+        });
+        if (error) {
+            const errors = error.details.map((error) => error.message);
+            return res.status(400).json(errors);
+        }
+        const product = await Product.findByIdAndUpdate(req.params.id, value, { new: true });
+        return res.status(200).json({
+            message: "Cập nhật sản phẩm thành công!",
+            product,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            message: error.message,
+        });
+    }
+    // const { id } = req.params;
+    // const body = req.body;
+    // const product = data.find((item) => item.id === +id);
+    // if (!product) return res.status(404).json({ message: "Sản phẩm không tồn tại" });
+    // // cập nhật
+    // data.map((item) => (item.id === +id ? { id: +id, ...body } : item));
+    // return res.status(200).json({
+    //     message: "Cập nhật sản phẩm thành công",
+    //     product: { id: +id, ...body },
+    // });
 };
