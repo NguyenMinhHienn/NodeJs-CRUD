@@ -3,10 +3,7 @@ import Product from "../models/product";
 
 // shcema validation
 const productSchema = Joi.object({
-    id: Joi.number().positive().integer().messages({
-        "number.base": "ID phải là số",
-        "number.positive": "ID phải là số dương",
-    }),
+    id: Joi.number().optional(),
     name: Joi.string().trim().required().min(3).messages({
         "string.base": "Tên sản phẩm phải là chuỗi",
         "string.trim": "Tên sản phẩm không được chứa khoảng trắng",
@@ -19,14 +16,6 @@ const productSchema = Joi.object({
         "any.required": "Giá sản phẩm bắt buộc nhập",
     }),
 });
-
-// data fake
-const data = [
-    { id: 1, name: "Product A", price: 100 }, // item
-    { id: 2, name: "Product B", price: 200 },
-    { id: 3, name: "Product C", price: 300 },
-    { id: 4, name: "Product D", price: 400 }, // item
-];
 /**
  * @route   GET /products
  * @desc    Lấy toàn bộ danh sách sản phẩm
@@ -51,15 +40,6 @@ export const getProducts = async (req, res) => {
  * @returns {Object} Thông tin sản phẩm hoặc thông báo lỗi
  * */
 export const getProductById = async (req, res) => {
-    // const id = req.params.id;
-    // const product = data.find((item) => item.id === +id);
-    // if (!product) {
-    //     return res.status(400).json({
-    //         message: "Không có sản phẩm nào!",
-    //     });
-    // }
-    // return res.status(200).json(product);
-
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
@@ -123,16 +103,6 @@ export const removeProduct = async (req, res) => {
             message: error.message,
         });
     }
-    // const { error, value } = productSchema.validate({ id: req.params.id }, { abortEarly: false });
-    // const { id } = req.params;
-    // const product = data.find((item) => item.id === +id);
-    // if (!product) return res.status(404).json({ message: "Sản phẩm không tồn tại" });
-    // // dữ liệu fake
-    // data.filter((item) => item.id !== +id);
-    // return res.status(200).json({
-    //     message: "Xóa sản phẩm thành công",
-    //     product,
-    // });
 };
 /**
  * @route   PUT /products/:id
@@ -164,14 +134,4 @@ export const updateProduct = async (req, res) => {
             message: error.message,
         });
     }
-    // const { id } = req.params;
-    // const body = req.body;
-    // const product = data.find((item) => item.id === +id);
-    // if (!product) return res.status(404).json({ message: "Sản phẩm không tồn tại" });
-    // // cập nhật
-    // data.map((item) => (item.id === +id ? { id: +id, ...body } : item));
-    // return res.status(200).json({
-    //     message: "Cập nhật sản phẩm thành công",
-    //     product: { id: +id, ...body },
-    // });
 };
