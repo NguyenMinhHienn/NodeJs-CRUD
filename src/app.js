@@ -4,6 +4,7 @@ import express from "express";
 // when? khi cần xây dựng 1 ứng dụng web
 import mongoose from "mongoose";
 import productRouter from "./routers/product";
+import authRouter from "./routers/auth";
 const app = express();
 app.use(express.json());
 // Kết nối db
@@ -11,4 +12,6 @@ mongoose.connect(`mongodb://localhost:27017/wd19321`);
 
 // routers
 app.use("/api", productRouter);
+app.use("/api", authRouter);
+
 export const viteNodeApp = app;
