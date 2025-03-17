@@ -17,6 +17,8 @@
         "bcryptjs": "^2.4.3",
         "express": "^4.21.2",
         "joi": "^17.13.3",
-        "mongoose": "^8.9.5"
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.9.5",
+        "mongoose-paginate-v2": "^1.9.0"
     }
 }
